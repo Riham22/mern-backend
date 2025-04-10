@@ -5,10 +5,9 @@ dotenv.config();
 import { User } from '../models/User.js';
 import { createSecretToken } from '../utils/SecretToken.js';
 import jwt from 'jsonwebtoken';
-import bcrypt  from 'bcryptjs';
+import bcrypt  from 'bcrypt';
 import nodemailer from 'nodemailer';
 import transporter from "../config/nodemailer.js";
-// import {transporter} from '../config/nodemailer.js';
 
 export const signUp= async (req,res,next)=> {
     
