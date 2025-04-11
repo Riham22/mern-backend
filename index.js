@@ -16,7 +16,7 @@ const httpServer = http.createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: ["https://mernfront-25dgfwx18-riham22s-projects.vercel.app"],
+    origin: ["https://mernfront-267uc4yje-riham22s-projects.vercel.app"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   },
@@ -77,7 +77,7 @@ httpServer.listen(PORT, () => {
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: ["https://mernfront-25dgfwx18-riham22s-projects.vercel.app"],
+  origin: ["https://mernfront-267uc4yje-riham22s-projects.vercel.app"],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 }));
