@@ -16,7 +16,7 @@ const httpServer = http.createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: ["http://localhost:5173"],
+    origin: ["https://mernfront-25dgfwx18-riham22s-projects.vercel.app"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   },
@@ -41,21 +41,17 @@ io.use((socket, next) => {
   }
 });
 
-
-
-
 io.on("connection", (socket) => {
   const token = socket.handshake.auth?.token;
 
   if (!token) {
     console.log("❌ No token provided");
-    return socket.disconnect(); // اقفل الاتصال فورًا
+    return socket.disconnect(); 
   }
 
   try {
     const decoded = jwt.verify(token, TOKEN_KEY);
     console.log("✅ User connected:", decoded.id);
-    // تقدر تستخدم decoded.id عادي
   } catch (err) {
     console.log("❌ Invalid token");
     return socket.disconnect();
@@ -81,7 +77,7 @@ httpServer.listen(PORT, () => {
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: ["http://localhost:5173"],
+  origin: ["https://mernfront-25dgfwx18-riham22s-projects.vercel.app"],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 }));
