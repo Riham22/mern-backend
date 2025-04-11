@@ -10,8 +10,8 @@ router.post('/logout',logout);
 router.post('/forgot',forgotPassword);
 router.post('/reset/:token', resetPassword);
 router.get('/tasks', getTasks);          
-router.post('/tasks', addTask);         
-router.put('/tasks/:id', updateTask);    
-router.delete('/tasks/:id', deleteTask); 
+router.post('/add', addTask);         
+router.put('/edit/:id', updateTask);    
+router.delete('/delete/:id', deleteTask); 
 
 export default router;

@@ -21,8 +21,10 @@ resetToken: {
   }
   
 });
-UserSchema.pre("save",async function(next) {
-    this.password=await bcrypt.hash(this.password,12);
-    next();
+UserSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next(); // ✅ لو الباسورد متغيرش، كمل عادي
+  this.password = await bcrypt.hash(this.password, 12);
+  next();
 });
+
 export const User=mongoose.model("User",UserSchema);

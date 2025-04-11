@@ -1,10 +1,10 @@
 import Task from "../models/Task.js";
-import {io} from '../index.js';
+import io from '../index.js';
 import { scheduleJob } from "node-schedule";
-// import { scheduleJob } from "node-schedule";
+
 export const getTasks = async (req, res) => {
   try {
-    const tasks = await Task.find().sort({ dateTime: 1 }); // ترتيب حسب التاريخ
+    const tasks = await Task.find().sort({ dateTime: 1 }); 
     res.status(200).json(tasks);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch tasks", error });
