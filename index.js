@@ -19,7 +19,7 @@ const allowedOrigins = [
   // "https://mernfront-sable.vercel.app",
   "https://clientmern-22tgb5300-riham22s-projects.vercel.app",
   'http://localhost:5173',
-  'https://clientmern.vercel.app/'
+  'https://clientmern.vercel.app'
 ];
 
 const corsOptions = {
@@ -31,9 +31,9 @@ const corsOptions = {
     }
   },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // تأكد إن OPTIONS موجود
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
   allowedHeaders: ["Content-Type", "Authorization"],
-  optionsSuccessStatus: 200 // ✅ دا مهم جداً علشان preflight في بعض البراوزرات
+  optionsSuccessStatus: 200 
 };
 
 
