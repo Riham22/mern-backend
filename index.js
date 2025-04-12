@@ -50,7 +50,7 @@ app.use("/", authRouters);
 
 const io = new Server(httpServer, {
   cors: corsOptions,
-  // transports: ["polling","websocket"],
+  transports: ["polling","websocket"],
 });
 
 io.use((socket, next) => {
