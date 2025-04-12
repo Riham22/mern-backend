@@ -17,7 +17,8 @@ const httpServer = http.createServer(app);
 
 const allowedOrigins = [
   // "https://mernfront-sable.vercel.app",
-  "https://clientmern-22tgb5300-riham22s-projects.vercel.app",'http://localhost:5173',
+  "https://clientmern-22tgb5300-riham22s-projects.vercel.app",
+  'http://localhost:5173',
   'https://clientmern.vercel.app/'
 ];
 
@@ -49,7 +50,7 @@ app.use("/", authRouters);
 
 const io = new Server(httpServer, {
   cors: corsOptions,
-  transports: ["polling","websocket"],
+  // transports: ["polling","websocket"],
 });
 
 io.use((socket, next) => {
