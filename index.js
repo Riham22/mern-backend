@@ -14,16 +14,27 @@ const { MONGO_URL, PORT, TOKEN_KEY } = process.env;
 const app = express();
 const httpServer = http.createServer(app);
 
-
-const allowedOrigins = [
-  // "https://mernfront-sable.vercel.app",
-  "https://clientmern-22tgb5300-riham22s-projects.vercel.app",
-  'http://localhost:5173',
-  'https://clientmern.vercel.app'
-];
+const io = new Server(httpServer, {
+  cors: {
+    origin: [
+      "https://clientmern-22tgb5300-riham22s-projects.vercel.app",
+      "http://localhost:5173",
+      "https://clientmern.vercel.app"
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+  },
+  transports: ["polling", "websocket"]
+});
 
 const corsOptions = {
   origin: function (origin, callback) {
+    const allowedOrigins = [
+      "https://clientmern-22tgb5300-riham22s-projects.vercel.app",
+      "http://localhost:5173",
+      "https://clientmern.vercel.app"
+    ];
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -31,34 +42,17 @@ const corsOptions = {
     }
   },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  optionsSuccessStatus: 200 
+  optionsSuccessStatus: 200
 };
 
-
-
 app.use(cors(corsOptions));
-
-
 app.use(express.json());
 app.use(cookieParser());
-
-
 app.use("/", authRouters);
 
-
-const io = new Server(httpServer, {
-  cors: {
-    origin: allowedOrigins,
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-  },
-  transports: ["polling", "websocket"],
-});
-
-
+// SOCKET AUTH
 io.use((socket, next) => {
   const token = socket.handshake.auth.token;
 
@@ -77,6 +71,7 @@ io.use((socket, next) => {
   }
 });
 
+// SOCKET EVENTS
 io.on("connection", (socket) => {
   console.log("✅ User connected:", socket.userId);
 
@@ -85,13 +80,13 @@ io.on("connection", (socket) => {
   });
 });
 
-
+// CONNECT TO DB
 mongoose.connect(MONGO_URL)
   .then(() => console.log("✅ MongoDB connected successfully"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-
-  httpServer.listen(PORT, () => {
+// START SERVER
+httpServer.listen(PORT, () => {
   console.log(`🚀 Server is listening on Port ${PORT}`);
 });
 
