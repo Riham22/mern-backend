@@ -8,7 +8,7 @@ import bcrypt from 'bcryptjs';
 import transporter from "../config/nodemailer.js";
 
 
-const myLink ='https://clientmern.vercel.app/';
+const myLink ='https://clientmern.vercel.app';
 
 
 export const signUp = async (req, res, next) => {

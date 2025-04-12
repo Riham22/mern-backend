@@ -49,9 +49,15 @@ app.use("/", authRouters);
 
 
 const io = new Server(httpServer, {
-  cors: corsOptions,
-  transports: ["polling","websocket"],
+  cors: {
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+  },
+  transports: ["polling", "websocket"],
 });
+
 
 io.use((socket, next) => {
   const token = socket.handshake.auth.token;
