@@ -9,9 +9,9 @@ router.get('/home',userVerification );
 router.post('/logout',logout);
 router.post('/forgot',forgotPassword);
 router.post('/reset/:token', resetPassword);
-router.get('/tasks', getTasks);          
-router.post('/add', addTask);         
-router.put('/edit/:id', updateTask);    
-router.delete('/delete/:id', deleteTask); 
+router.get('/tasks', userVerification,getTasks);          
+router.post('/add',userVerification, addTask);         
+router.put('/edit/:id',userVerification, updateTask);    
+router.delete('/delete/:id', userVerification, deleteTask); 
 
 export default router;

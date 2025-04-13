@@ -4,7 +4,7 @@ import { scheduleJob } from "node-schedule";
 
 export const getTasks = async (req, res) => {
   try {
-    const tasks = await Task.find().sort({ dateTime: 1 }); 
+    const tasks = await Task.find({ createdBy: req.user._id }).sort({ dateTime: 1 }); ;
     res.status(200).json(tasks);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch tasks", error });
@@ -21,6 +21,7 @@ export const addTask = async (req, res) => {
       description,
       dateTime,
       remindMe,
+      createdBy: req.user._id,
     });
 
     await newTask.save();
@@ -57,7 +58,7 @@ export const updateTask = async (req, res) => {
     const { title, description, dateTime, remindMe } = req.body;
 
     const updatedTask = await Task.findByIdAndUpdate(
-      id,
+      { _id: id, createdBy: req.user._id },
       { title, description, dateTime, remindMe },
       { new: true }
     );
@@ -78,7 +79,7 @@ export const deleteTask = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deletedTask = await Task.findByIdAndDelete(id);
+    const deletedTask = await Task.findByIdAndDelete({ _id: id, createdBy: req.user._id });
 
     if (!deletedTask) {
       return res.status(404).json({ message: "Task not found" });
