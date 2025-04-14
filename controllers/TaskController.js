@@ -23,8 +23,10 @@ export const addTask = async (req, res) => {
       remindMe,
       createdBy: req.user._id,
     });
+    console.log("➡️ Received addTask request", req.body);
 
     await newTask.save();
+    console.log("✅ Task saved:", newTask);
 
     if (remindMe) {
       const reminderTime = new Date(newTask.dateTime);
@@ -41,6 +43,7 @@ export const addTask = async (req, res) => {
         });
       }
     }
+    console.log("👤 User in request:", req.user);
 
     res.status(201).json({ message: "Task added successfully", task: newTask });
 

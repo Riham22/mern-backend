@@ -3,37 +3,31 @@ import dotenv from 'dotenv';
 import { User } from '../models/User.js';
 import  jwt from 'jsonwebtoken';
 dotenv.config();
-export const userVerification = (req, res) => {
-    const token = req.cookies.token;
+export const userVerification = async(req, res, next) => {
+    const token =
+    req.cookies.token ||
+    (req.headers.authorization && req.headers.authorization.split(" ")[1]);
 
-    if (!token) {
-        console.log('❌ No token found');
-        return res.status(401).json({ status: false, message: "No token" });
+  if (!token) {
+    console.log('❌ No token found');
+    return res.status(401).json({ message: "No token" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.TOKEN_KEY);
+    console.log('✅ Decoded Token:', decoded);
+
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      console.log('❌ User not found for ID:', decoded.id);
+      return res.status(401).json({ message: "User not found" });
     }
 
-    jwt.verify(token, process.env.TOKEN_KEY, async (err, data) => {
-        if (err) {
-            console.log('❌ Token verification failed:', err);
-            return res.status(401).json({ status: false, message: "Invalid token" });
-        }
-
-        console.log('✅ Decoded Token:', data);
-
-        try {
-            const user = await User.findById(data.id); // أو data.userId لو ده اللي بتستخدمه
-            if (user) {
-                console.log('✅ User found:', user.username);
-                return res.status(200).json({
-                    status: true,
-                    user: { username: user.username, id: user._id },
-                });
-            } else {
-                console.log('❌ User not found for ID:', data.id);
-                return res.status(401).json({ status: false, message: "User not found" });
-            }
-        } catch (error) {
-            console.log('❌ Error finding user:', error);
-            return res.status(500).json({ status: false, message: "Server error" });
-        }
-    });
+    req.user = user;
+    console.log('✅ User verified and attached to req:', user.username);
+    next(); // 👈 دي أهم حاجة
+  } catch (error) {
+    console.log('❌ Error in middleware:', error.message);
+    return res.status(401).json({ message: "Invalid token" });
+  }
 };
