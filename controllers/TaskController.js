@@ -30,7 +30,7 @@ export const addTask = async (req, res) => {
 
     if (remindMe) {
       const reminderTime = new Date(newTask.dateTime);
-      reminderTime.setMinutes(reminderTime.getMinutes() - 5); // ناقص 5 دقائق
+      reminderTime.setMinutes(reminderTime.getMinutes() - 5); 
 
       if (reminderTime > new Date()) {
         scheduleJob(reminderTime, () => {
@@ -43,9 +43,8 @@ export const addTask = async (req, res) => {
         });
       }
     }
-    console.log("👤 User in request:", req.user);
+    res.status(201).json({ task: newTask }); 
 
-    res.status(201).json({ message: "Task added successfully", task: newTask });
 
   } catch (error) {
     console.error(error);

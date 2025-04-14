@@ -24,7 +24,7 @@ export const userVerification = async(req, res, next) => {
     }
 
     req.user = user;
-    console.log('✅ User verified and attached to req:', user.username);
+    // console.log('✅ User verified and attached to req:', user.username);
     next(); // 👈 دي أهم حاجة
   } catch (error) {
     console.log('❌ Error in middleware:', error.message);
