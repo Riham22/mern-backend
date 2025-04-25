@@ -68,6 +68,15 @@ export const logIn = async (req, res, next) => {
   }
 };
 
+export const getAllUsersExceptCurrent = async (req, res) => {
+  try {
+    const users = await User.find({ _id: { $ne: req.user._id } }).select("username _id");
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to get users", error });
+  }
+};
+
 
 export const forgotPassword = async (req, res) => {
   try {

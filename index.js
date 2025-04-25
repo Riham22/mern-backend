@@ -52,10 +52,14 @@ app.use(express.json());
 app.use(cookieParser());
 app.use("/", authRouters);
 
-// SOCKET AUTH
+
 io.use((socket, next) => {
   const token = socket.handshake.auth.token;
+  const userId = socket.handshake.query.userId;
 
+  if (userId) {
+    socket.join(userId); // Room باسم اليوزر
+  }
   if (!token) {
     console.log("❌ No token provided");
     return next(new Error("Authentication error"));
@@ -71,22 +75,27 @@ io.use((socket, next) => {
   }
 });
 
-// SOCKET EVENTS
+
 io.on("connection", (socket) => {
   console.log("✅ User connected:", socket.userId);
+  socket.on("join-room", (userId) => {
+    socket.join(userId);
+    console.log(`📥 ${userId} joined their room`);
+  });
 
   socket.on("disconnect", () => {
     console.log("❌ Socket disconnected");
   });
 });
 
-// CONNECT TO DB
+
+
 mongoose.connect(MONGO_URL)
   .then(() => console.log("✅ MongoDB connected successfully"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// START SERVER
-httpServer.listen(PORT, () => {
+
+  httpServer.listen(PORT, () => {
   console.log(`🚀 Server is listening on Port ${PORT}`);
 });
 

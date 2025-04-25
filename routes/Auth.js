@@ -13,5 +13,6 @@ router.get('/tasks', userVerification,getTasks);
 router.post('/add',userVerification, addTask);         
 router.put('/edit/:id',userVerification, updateTask);    
 router.delete('/delete/:id', userVerification, deleteTask); 
+router.get('/users', userVerification, getAllUsersExceptCurrent);
 
 export default router;

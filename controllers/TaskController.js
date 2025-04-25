@@ -14,37 +14,46 @@ export const getTasks = async (req, res) => {
 
 export const addTask = async (req, res) => {
   try {
-    const { title, description, dateTime, remindMe } = req.body;
+    const { title, description, dateTime, remindMe, assignedTo } = req.body;
 
     const newTask = new Task({
       title,
       description,
       dateTime,
       remindMe,
+      assignedTo,
       createdBy: req.user._id,
     });
-    console.log("➡️ Received addTask request", req.body);
 
     await newTask.save();
-    console.log("✅ Task saved:", newTask);
 
+    // 🔔 نوتيفيكيشن لكل يوزر في assignedTo
+    if (Array.isArray(assignedTo)) {
+      assignedTo.forEach(userId => {
+        io.to(userId.toString()).emit("new-task", newTask);
+      });
+    }
+
+    // 🔔 تذكير لو فيه remindMe
     if (remindMe) {
       const reminderTime = new Date(newTask.dateTime);
-      reminderTime.setMinutes(reminderTime.getMinutes() - 5); 
+      reminderTime.setMinutes(reminderTime.getMinutes() - 5);
 
       if (reminderTime > new Date()) {
         scheduleJob(reminderTime, () => {
-          io.emit("taskReminder", {
-            id: newTask._id,
-            title: newTask.title,
-            description: newTask.description,
-            time: newTask.dateTime,
+          assignedTo.forEach(userId => {
+            io.to(userId.toString()).emit("taskReminder", {
+              id: newTask._id,
+              title: newTask.title,
+              description: newTask.description,
+              time: newTask.dateTime,
+            });
           });
         });
       }
     }
-    res.status(201).json({ task: newTask }); 
 
+    res.status(201).json({ task: newTask });
 
   } catch (error) {
     console.error(error);
@@ -64,7 +73,12 @@ export const updateTask = async (req, res) => {
       { title, description, dateTime, remindMe },
       { new: true }
     );
-
+    if (updatedTask) {
+      updatedTask.assignedTo.forEach((userId) => {
+        io.to(userId.toString()).emit("task-updated", updatedTask);
+      });
+      
+    }
     if (!updatedTask) {
       return res.status(404).json({ message: 'Task not found' });
     }
