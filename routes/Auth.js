@@ -1,5 +1,5 @@
 import express  from 'express';
-import { forgotPassword, logIn, logout, resetPassword, signUp } from '../controllers/AuthControllers.js';
+import { forgotPassword, getAllUsersExceptCurrent, logIn, logout, resetPassword, signUp } from '../controllers/AuthControllers.js';
 import { userVerification } from '../middlewares/AuthMiddlewares.js';
 import { addTask, deleteTask, getTasks, updateTask } from './../controllers/TaskController.js';
 const router = express.Router();
