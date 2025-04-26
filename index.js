@@ -57,9 +57,9 @@ io.use((socket, next) => {
   const token = socket.handshake.auth.token;
   const userId = socket.handshake.query.userId;
 
-  if (userId) {
-    socket.join(userId); // Room باسم اليوزر
-  }
+  // if (userId) {
+  //   socket.join(userId); // Room باسم اليوزر
+  // }
   if (!token) {
     console.log("❌ No token provided");
     return next(new Error("Authentication error"));
@@ -85,6 +85,8 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("❌ Socket disconnected");
+    socket.leave(socket.userId);
+
   });
 });
 

@@ -76,6 +76,9 @@ export const updateTask = async (req, res) => {
     if (updatedTask) {
       updatedTask.assignedTo.forEach((userId) => {
         io.to(userId.toString()).emit("task-updated", updatedTask);
+        console.log("🧾 Updating task:", updatedTask);
+console.log("📢 Notifying users:", updatedTask.assignedTo);
+
       });
       
     }
