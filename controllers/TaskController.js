@@ -4,8 +4,13 @@ import { scheduleJob } from "node-schedule";
 
 export const getTasks = async (req, res) => {
   try {
-    const tasks = await Task.find({ createdBy: req.user._id }).sort({ dateTime: 1 }); ;
-    res.status(200).json(tasks);
+    const tasks = await Task.find({
+      $or: [
+        { createdBy: req.user._id },
+        { assignedTo: req.user._id }
+      ]
+    }).sort({ dateTime: 1 });
+        res.status(200).json(tasks);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch tasks", error });
   }
@@ -29,9 +34,11 @@ export const addTask = async (req, res) => {
 
     // 🔔 نوتيفيكيشن لكل يوزر في assignedTo
     if (Array.isArray(assignedTo)) {
+      
       assignedTo.forEach(userId => {
-        io.to(userId.toString()).emit("new-task", newTask);
-      });
+        if (userId) {
+          io.to(userId.toString()).emit("new-task", newTask);
+        }      });
     }
 
     // 🔔 تذكير لو فيه remindMe
@@ -41,6 +48,7 @@ export const addTask = async (req, res) => {
 
       if (reminderTime > new Date()) {
         scheduleJob(reminderTime, () => {
+          
           assignedTo.forEach(userId => {
             io.to(userId.toString()).emit("taskReminder", {
               id: newTask._id,
@@ -68,11 +76,18 @@ export const updateTask = async (req, res) => {
     const { id } = req.params;
     const { title, description, dateTime, remindMe } = req.body;
 
-    const updatedTask = await Task.findByIdAndUpdate(
-      { _id: id, createdBy: req.user._id },
+    const updatedTask = await Task.findOneAndUpdate(
+      {
+        _id: id,
+        $or: [
+          { createdBy: req.user._id },
+          { assignedTo: req.user._id }
+        ]
+      },
       { title, description, dateTime, remindMe },
       { new: true }
     );
+    
     if (updatedTask) {
       updatedTask.assignedTo.forEach((userId) => {
         io.to(userId.toString()).emit("task-updated", updatedTask);

@@ -82,7 +82,11 @@ io.on("connection", (socket) => {
     socket.join(userId);
     console.log(`📥 ${userId} joined their room`);
   });
-
+  socket.on("update-task", ({ taskId, updatedData }) => {
+    console.log(`♻️ Broadcasting task update for ${taskId}`);
+    io.to(taskId).emit("task-updated", updatedData);
+  });
+  
   socket.on("disconnect", () => {
     console.log("❌ Socket disconnected");
     socket.leave(socket.userId);
