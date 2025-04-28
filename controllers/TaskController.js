@@ -32,7 +32,7 @@ export const addTask = async (req, res) => {
 
     await newTask.save();
 
-    // 🔔 نوتيفيكيشن لكل يوزر في assignedTo
+
     if (Array.isArray(assignedTo)) {
       
       assignedTo.forEach(userId => {

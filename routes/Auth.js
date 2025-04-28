@@ -5,7 +5,7 @@ import { addTask, deleteTask, getTasks, updateTask } from './../controllers/Task
 const router = express.Router();
 router.post('/register',signUp );
 router.post('/login',logIn);
-router.get('/home',userVerification );
+router.get('/home',userVerification, getAllUsersExceptCurrent);
 router.post('/logout',logout);
 router.post('/forgot',forgotPassword);
 router.post('/reset/:token', resetPassword);
